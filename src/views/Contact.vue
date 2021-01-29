@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="contact">
     <Header />
     <div class="content">
       <v-sheet height="100vh">
@@ -14,7 +14,7 @@
 import Footer from "../components/parts/Footer";
 import Header from "../components/parts/Header";
 export default {
-  name: "About",
+  name: "Contact",
   components: { Footer, Header },
   data() {
     return {
