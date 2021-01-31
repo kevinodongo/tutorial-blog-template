@@ -10,9 +10,10 @@
       </v-btn>
     </v-card-actions>
     <v-card
-      min-height="600"
-      max-height="600"
-      style="overflow-y: auto; overflow-x: auto"
+      min-height="550"
+      max-height="550"
+      elevation="5"
+      style="overflow-y: auto; overflow-x: auto; border-radius: 5px;"
     >
       <v-card-text>
         <v-sheet width="100" v-if="item.content.src">
@@ -34,7 +35,7 @@
             </h1>
           </template>
         </v-textarea>
-        <v-sheet color="#eeeeee">
+        <v-sheet style="border: 2px dashed grey; border-radius: 10px;">
           <v-card-text>
             <input
               type="file"
@@ -56,22 +57,46 @@
         ></v-textarea>
       </v-card-text>
     </v-card>
-    <div class="mt-5">
-      <v-btn dark color="pink" large @click="publishitem">
+    <v-card-actions class="mt-3">
+      <v-btn
+        style="border-radius: 10px"
+        dark
+        color="primary"
+        class="pl-5 pr-5"
+        large
+        @click="publishitem"
+      >
         <span style="text-transform: capitalize">Publish</span>
       </v-btn>
-      <v-btn color="#e0e0e0" class="ml-2" large @click="savedraft">
+      <v-btn
+        style="border-radius: 10px"
+        color="#e0e0e0"
+        class="ml-2 pl-5 pr-5"
+        large
+        @click="savedraft"
+      >
         <span style="text-transform: capitalize">Save</span>
         <span style="text-transform: lowercase" class="ml-1">draft</span>
       </v-btn>
-    </div>
+      <v-spacer></v-spacer>
+      <v-btn
+        style="border-radius: 10px"
+        class="pl-5 pr-5"
+        dark
+        color="error"
+        large
+        @click="deleteitem"
+      >
+        <span style="text-transform: capitalize">Delete</span>
+      </v-btn>
+    </v-card-actions>
   </div>
 </template>
 
 <script>
 export default {
   name: "Form",
-  props: ["item"],
+  props: ["item", "isEdited"],
   data() {
     return {
       url: null
@@ -102,6 +127,10 @@ export default {
     // publish item
     publishitem() {
       this.$emit("publishitem");
+    },
+    // delete item
+    deleteitem() {
+      this.$emit("deletepost");
     }
   }
 };

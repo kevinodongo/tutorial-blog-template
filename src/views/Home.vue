@@ -27,11 +27,14 @@
             <v-col cols="12" md="8">
               <v-sheet
                 style="margin-top: 5rem"
-                v-for="(item, index) in articles"
+                v-for="(item, index) in published"
                 :key="index"
               >
-                <v-sheet height="400">
-                  <v-img :src="item.content.src" height="400"></v-img>
+                <v-sheet height="400" v-if="JSON.parse(item.content).src">
+                  <v-img
+                    :src="JSON.parse(item.content).src"
+                    height="400"
+                  ></v-img>
                 </v-sheet>
                 <div style="margin-top: -40px;">
                   <v-btn color="white" large fab>
@@ -39,7 +42,10 @@
                     <div>48</div>
                   </v-btn>
                 </div>
-                <h1 class="content_title" v-text="item.content.title"></h1>
+                <h1
+                  class="content_title"
+                  v-text="JSON.parse(item.content).title"
+                ></h1>
                 <div class="mb-5 mt-5">
                   <v-avatar>
                     <img
@@ -47,11 +53,17 @@
                       alt="Tim"
                     />
                   </v-avatar>
-                  <span class="author_section" v-text="item.author.name"></span>
+                  <span
+                    class="author_section"
+                    v-text="JSON.parse(item.author).name"
+                  ></span>
                   <span class="ml-3 mr-2"><v-icon>mdi-minus</v-icon></span>
                   <span class="author_section" v-text="item.createdAt"></span>
                 </div>
-                <div class="content_text_truncated" v-text="item.content.text"></div>
+                <div
+                  class="content_text_truncated"
+                  v-text="JSON.parse(item.content).text"
+                ></div>
                 <v-card-actions class="mt-5">
                   <v-row align="center">
                     <v-btn
@@ -125,6 +137,7 @@
 </template>
 
 <script>
+import { retriveallblog } from "../components/mongo-express-script";
 import Footer from "../components/parts/Footer";
 import Header from "../components/parts/Header";
 export default {
@@ -145,19 +158,32 @@ export default {
             "https://i.picsum.photos/id/1026/4621/3070.jpg?hmac=OJ880cIneqAKIwHbYgkRZxQcuMgFZ4IZKJasZ5c5Wcw"
         }
       ]
-      //articles: []
     };
   },
+  // computed
   computed: {
-    articles() {
+    published() {
       return this.$store.getters.published;
     }
   },
+  // mounted
+  async mounted() {
+    const response = await retriveallblog();
+    this.$store.commit("updatearticle", response.data);
+  },
+  // methods
   methods: {
     // read article
     readarticle(item) {
-      this.$store.commit("updateselected", item);
-      let route = `/read/${item.article_id}`;
+      let data = {
+        _id: item._id,
+        author: Object.assign({}, JSON.parse(item.author)),
+        content: Object.assign({}, JSON.parse(item.content)),
+        published: item.published,
+        createdAt: item.createdAt
+      };
+      this.$store.commit("updateselected", data);
+      let route = `/read/${item._id}`;
       this.$router.push(route);
     }
   }
@@ -187,7 +213,7 @@ export default {
   font-size: 1.1em;
   color: #757575;
   font-family: "Montserrat", sans-serif;
-   --lh: 1.4rem;
+  --lh: 1.4rem;
   line-height: var(--lh);
   --max-lines: 3;
   max-height: calc(var(--lh) * var(--max-lines));

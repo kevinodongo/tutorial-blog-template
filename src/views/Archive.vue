@@ -6,11 +6,11 @@
         <v-col cols="11" md="9">
           <v-sheet
             style="margin-top: 5rem"
-            v-for="(item, index) in articles"
+            v-for="(item, index) in published"
             :key="index"
           >
-            <v-sheet height="400">
-              <v-img :src="item.content.src" height="400"></v-img>
+            <v-sheet height="400" v-if="JSON.parse(item.content).src">
+              <v-img :src="JSON.parse(item.content).src" height="400"></v-img>
             </v-sheet>
             <div style="margin-top: -40px;">
               <v-btn color="white" large fab>
@@ -18,7 +18,10 @@
                 <div>48</div>
               </v-btn>
             </div>
-            <h1 class="content_title" v-text="item.content.title"></h1>
+            <h1
+              class="content_title"
+              v-text="JSON.parse(item.content).title"
+            ></h1>
             <div class="mb-5 mt-5">
               <v-avatar>
                 <img
@@ -26,11 +29,17 @@
                   alt="Tim"
                 />
               </v-avatar>
-              <span class="author_section" v-text="item.author.name"></span>
+              <span
+                class="author_section"
+                v-text="JSON.parse(item.author).name"
+              ></span>
               <span class="ml-3 mr-2"><v-icon>mdi-minus</v-icon></span>
               <span class="author_section" v-text="item.createdAt"></span>
             </div>
-            <div class="content_text" v-text="item.content.text"></div>
+            <div
+              class="content_text"
+              v-text="JSON.parse(item.content).text"
+            ></div>
             <v-row align="center" class="mt-5">
               <v-btn v-for="icon in icons" :key="icon" icon class="mx-1" small>
                 <v-icon color="black" size="17px">
@@ -59,6 +68,7 @@
 </template>
 
 <script>
+import { retriveallblog } from "../components/mongo-express-script";
 import Footer from "../components/parts/Footer";
 import Header from "../components/parts/Header";
 export default {
@@ -66,14 +76,20 @@ export default {
   components: { Footer, Header },
   data() {
     return {
-      icons: ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"],
+      icons: ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"]
     };
   },
+  // computed
   computed: {
-    articles() {
+    published() {
       return this.$store.getters.published;
     }
   },
+  // mounted
+  async mounted() {
+    const response = await retriveallblog();
+    this.$store.commit("updatearticle", response.data);
+  }
 };
 </script>
 
