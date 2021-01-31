@@ -84,7 +84,7 @@ import {
   deleteblog,
   retriveallblog,
   updateblog
-} from "../mongo-express-script";
+} from "../MySQL-express-script";
 export default {
   name: "Dashboard",
   components: { Form },
@@ -148,7 +148,7 @@ export default {
       this.isEdited = true;
       this.editedIndex = this.items.indexOf(item);
       this.item = {
-        _id: item._id,
+        _id: item._id ? item._id : item.id,
         author: Object.assign({}, JSON.parse(item.author)),
         content: Object.assign({}, JSON.parse(item.content)),
         published: item.published,
@@ -230,7 +230,8 @@ export default {
       data.splice(index, 1);
       // save to vuex
       this.$store.commit("updatearticle", data);
-      await deleteblog(this.item._id);
+      let deleted_id = this.item._id ? this.item._id : this.item.id;
+      await deleteblog(deleted_id);
       // timeout
       setTimeout(() => {
         this.loading = false;

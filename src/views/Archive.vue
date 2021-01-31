@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { retriveallblog } from "../components/mongo-express-script";
+import { retriveallblog } from "../components/postgreSQL-express-script";
 import Footer from "../components/parts/Footer";
 import Header from "../components/parts/Header";
 export default {
